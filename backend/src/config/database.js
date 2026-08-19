@@ -1,4 +1,4 @@
-﻿import pkg from 'pg';
+import pkg from 'pg';
 const { Pool } = pkg;
 import dotenv from 'dotenv';
 
@@ -17,7 +17,6 @@ const pool = new Pool({
     connectionTimeoutMillis: 10000,
 });
 
-// Testar conexão ao iniciar
 pool.on('connect', () => {
     console.log('✅ Conectado ao PostgreSQL!');
 });
