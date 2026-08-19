@@ -1,0 +1,92 @@
+{
+  "hash": "f398102a",
+  "browserHash": "718583be",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "6eb6c1a7",
+      "needsInterop": true
+    },
+    "react-dom": {
+      "src": "../../node_modules/react-dom/index.js",
+      "file": "react-dom.js",
+      "fileHash": "a902aa1d",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "b3285f82",
+      "needsInterop": true
+    },
+    "react/jsx-runtime": {
+      "src": "../../node_modules/react/jsx-runtime.js",
+      "file": "react_jsx-runtime.js",
+      "fileHash": "e8ba66ce",
+      "needsInterop": true
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "d3415aed",
+      "needsInterop": false
+    },
+    "jspdf": {
+      "src": "../../node_modules/jspdf/dist/jspdf.es.min.js",
+      "file": "jspdf.js",
+      "fileHash": "6c44aac1",
+      "needsInterop": false
+    },
+    "jspdf-autotable": {
+      "src": "../../node_modules/jspdf-autotable/dist/jspdf.plugin.autotable.js",
+      "file": "jspdf-autotable.js",
+      "fileHash": "2a47d5f4",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "34e9711d",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "ae421302",
+      "needsInterop": false
+    },
+    "socket.io-client": {
+      "src": "../../node_modules/socket.io-client/build/esm/index.js",
+      "file": "socket__io-client.js",
+      "fileHash": "c2e662e5",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "html2canvas.esm-TJIDDAMN": {
+      "file": "html2canvas__esm-TJIDDAMN.js"
+    },
+    "purify.es-PVNISGKA": {
+      "file": "purify__es-PVNISGKA.js"
+    },
+    "index.es-5VBLOUKW": {
+      "file": "index__es-5VBLOUKW.js"
+    },
+    "chunk-DEKZFPN3": {
+      "file": "chunk-DEKZFPN3.js"
+    },
+    "chunk-UMBEC6V5": {
+      "file": "chunk-UMBEC6V5.js"
+    },
+    "chunk-BUFJJV43": {
+      "file": "chunk-BUFJJV43.js"
+    },
+    "chunk-JBQVMES7": {
+      "file": "chunk-JBQVMES7.js"
+    },
+    "chunk-ROME4SDB": {
+      "file": "chunk-ROME4SDB.js"
+    }
+  }
+}
