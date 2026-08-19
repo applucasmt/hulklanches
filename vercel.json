@@ -12,7 +12,12 @@
       "src": "backend/src/server.js",
       "use": "@vercel/node",
       "config": {
-        "maxLambdaSize": "15mb"
+        "maxLambdaSize": "15mb",
+        "includeFiles": [
+          "backend/src/**",
+          "backend/package.json",
+          "backend/package-lock.json"
+        ]
       }
     }
   ],
