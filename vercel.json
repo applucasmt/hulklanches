@@ -3,14 +3,12 @@
     "frontend": {
       "root": "frontend",
       "buildCommand": "npm run build",
-      "outputDirectory": "dist",
-      "environment": "production"
+      "outputDirectory": "dist"
     },
     "backend": {
       "root": "backend",
       "buildCommand": "npm install",
-      "outputDirectory": "src",
-      "environment": "production"
+      "outputDirectory": "src"
     }
   },
   "routes": [
