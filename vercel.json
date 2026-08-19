@@ -7,8 +7,8 @@
     },
     "backend": {
       "root": "backend",
-      "buildCommand": "npm install",
-      "outputDirectory": "src"
+      "entrypoint": "src/server.js",
+      "buildCommand": "npm install"
     }
   },
   "routes": [
