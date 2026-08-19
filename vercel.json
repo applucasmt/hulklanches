@@ -1,0 +1,26 @@
+{
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist",
+      "environment": "production"
+    },
+    "backend": {
+      "root": "backend",
+      "buildCommand": "npm install",
+      "outputDirectory": "src",
+      "environment": "production"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/src/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dist/index.html"
+    }
+  ]
+}
