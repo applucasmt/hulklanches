@@ -4,8 +4,7 @@ export class Combo {
     static async findAll() {
         const db = await getDatabase();
         const result = await db.query(`
-            SELECT c.*, 
-                   COUNT(ci.id) as items_count,
+            SELECT c.*, COUNT(ci.id) as items_count,
                    json_agg(DISTINCT ci.*) FILTER (WHERE ci.id IS NOT NULL) as items
             FROM combos c
             LEFT JOIN combo_items ci ON c.id = ci.combo_id
@@ -18,8 +17,7 @@ export class Combo {
     static async findById(id) {
         const db = await getDatabase();
         const result = await db.query(`
-            SELECT c.*, 
-                   json_agg(DISTINCT ci.*) FILTER (WHERE ci.id IS NOT NULL) as items
+            SELECT c.*, json_agg(DISTINCT ci.*) FILTER (WHERE ci.id IS NOT NULL) as items
             FROM combos c
             LEFT JOIN combo_items ci ON c.id = ci.combo_id
             WHERE c.id = $1
@@ -30,21 +28,14 @@ export class Combo {
 
     static async create({ name, description, price, image_url, is_visible = true, items = [] }) {
         const db = await getDatabase();
-        
-        // Iniciar transação
         await db.query('BEGIN');
-        
         try {
-            // Inserir combo
             const result = await db.query(
                 `INSERT INTO combos (name, description, price, image_url, is_visible) 
                  VALUES ($1, $2, $3, $4, $5) RETURNING *`,
                 [name, description, price, image_url, is_visible]
             );
-            
             const combo = result.rows[0];
-            
-            // Inserir itens do combo
             for (const item of items) {
                 await db.query(
                     `INSERT INTO combo_items (combo_id, product_id, quantity, discount_percent) 
@@ -52,7 +43,6 @@ export class Combo {
                     [combo.id, item.product_id, item.quantity || 1, item.discount_percent || 0]
                 );
             }
-            
             await db.query('COMMIT');
             return combo;
         } catch (error) {
@@ -63,25 +53,15 @@ export class Combo {
 
     static async update(id, { name, description, price, image_url, is_visible, items = [] }) {
         const db = await getDatabase();
-        
         await db.query('BEGIN');
-        
         try {
-            // Atualizar combo
             const result = await db.query(
-                `UPDATE combos SET 
-                    name = $1, description = $2, price = $3, 
-                    image_url = $4, is_visible = $5, updated_at = CURRENT_TIMESTAMP
+                `UPDATE combos SET name = $1, description = $2, price = $3, image_url = $4, is_visible = $5, updated_at = CURRENT_TIMESTAMP
                  WHERE id = $6 RETURNING *`,
                 [name, description, price, image_url, is_visible, id]
             );
-            
             const combo = result.rows[0];
-            
-            // Remover itens antigos
             await db.query('DELETE FROM combo_items WHERE combo_id = $1', [id]);
-            
-            // Inserir novos itens
             for (const item of items) {
                 await db.query(
                     `INSERT INTO combo_items (combo_id, product_id, quantity, discount_percent) 
@@ -89,7 +69,6 @@ export class Combo {
                     [combo.id, item.product_id, item.quantity || 1, item.discount_percent || 0]
                 );
             }
-            
             await db.query('COMMIT');
             return combo;
         } catch (error) {
@@ -101,31 +80,5 @@ export class Combo {
     static async delete(id) {
         const db = await getDatabase();
         await db.query('DELETE FROM combos WHERE id = $1', [id]);
-    }
-
-    static async getItems(comboId) {
-        const db = await getDatabase();
-        const result = await db.query(`
-            SELECT ci.*, p.name as product_name, p.price as product_price
-            FROM combo_items ci
-            JOIN products p ON ci.product_id = p.id
-            WHERE ci.combo_id = $1
-        `, [comboId]);
-        return result.rows;
-    }
-
-    static async calculateTotal(comboId, productQuantities = {}) {
-        const items = await this.getItems(comboId);
-        let total = 0;
-        
-        for (const item of items) {
-            const quantity = productQuantities[item.product_id] || item.quantity || 1;
-            const price = item.product_price || 0;
-            const discount = item.discount_percent || 0;
-            const itemTotal = price * quantity * (1 - discount / 100);
-            total += itemTotal;
-        }
-        
-        return total;
     }
 }
