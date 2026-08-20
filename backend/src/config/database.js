@@ -15,6 +15,7 @@ const pool = new Pool({
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 pool.on('connect', () => {
@@ -40,10 +41,6 @@ export async function query(text, params) {
         console.error('❌ Erro na query:', error);
         throw error;
     }
-}
-
-export async function getClient() {
-    return await pool.connect();
 }
 
 export default pool;
