@@ -1,19 +1,19 @@
-﻿import { Product } from "../models/Product.js";
-import fsPromises from "fs/promises";
-import fs from "fs";
-import path from "path";
+import { Product } from '../models/Product.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-async function saveImage(file) {
-    const uploadDir = path.join(process.cwd(), "uploads", "products");
-    
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+function saveImage(file) {
+    const uploadDir = path.join(process.cwd(), 'uploads', 'products');
     if (!fs.existsSync(uploadDir)) {
-        await fsPromises.mkdir(uploadDir, { recursive: true });
+        fs.mkdirSync(uploadDir, { recursive: true });
     }
-    
-    const uniqueName = Date.now() + "-" + file.originalname.replace(/\s/g, '_');
+    const uniqueName = Date.now() + "-" + file.originalname;
     const filePath = path.join(uploadDir, uniqueName);
-    
-    await fsPromises.writeFile(filePath, file.buffer);
+    fs.writeFileSync(filePath, file.buffer);
     return "/uploads/products/" + uniqueName;
 }
 
@@ -36,6 +36,7 @@ export async function getProducts(req, res) {
         }
         res.json(products);
     } catch (error) {
+        console.error("❌ Erro ao listar produtos:", error);
         res.status(500).json({ error: error.message });
     }
 }
@@ -54,11 +55,13 @@ export async function getProduct(req, res) {
 
 export async function createProduct(req, res) {
     try {
-        // Se o multer estiver funcionando na rota, o req.body terá os dados aqui.
+        console.log("📦 Body recebido:", req.body);
+        console.log("📂 Arquivos:", req.files ? req.files.length : 0);
+
         const { name, description, price, category_id, stock, is_visible, is_promotion, promotion_price } = req.body;
 
-        if (price === undefined || price === null || price === "") {
-            return res.status(400).json({ error: "Preço não enviado no corpo da requisição. Verifique o envio do FormData." });
+        if (!price) {
+            return res.status(400).json({ error: "Preço não enviado" });
         }
 
         const parsedPrice = parsePrice(price);
@@ -69,9 +72,13 @@ export async function createProduct(req, res) {
             return res.status(400).json({ error: "Preço inválido. Recebido: " + price });
         }
 
+        if (isNaN(parsedCategoryId) || parsedCategoryId <= 0) {
+            return res.status(400).json({ error: "Categoria inválida. Recebido: " + category_id });
+        }
+
         let images = [];
         if (req.files && req.files.length > 0) {
-            images = await Promise.all(req.files.map(file => saveImage(file)));
+            images = req.files.map(function(file) { return saveImage(file); });
         }
 
         const productData = {
@@ -89,6 +96,7 @@ export async function createProduct(req, res) {
         const product = await Product.create(productData);
         res.status(201).json(product);
     } catch (error) {
+        console.error("❌ Erro ao criar produto:", error);
         res.status(500).json({ error: error.message });
     }
 }
@@ -102,17 +110,10 @@ export async function updateProduct(req, res) {
             return res.status(404).json({ error: "Produto não encontrado" });
         }
 
-        let images = [];
-        if (existingProduct.images) {
-            try {
-                images = typeof existingProduct.images === 'string' ? JSON.parse(existingProduct.images) : existingProduct.images;
-            } catch (e) {
-                images = [];
-            }
-        }
+        let images = existingProduct.images || [];
 
         if (req.files && req.files.length > 0) {
-            const newImages = await Promise.all(req.files.map(file => saveImage(file)));
+            const newImages = req.files.map(function(file) { return saveImage(file); });
             if (req.body.replace_images === "true") {
                 images = newImages;
             } else {
@@ -121,8 +122,8 @@ export async function updateProduct(req, res) {
         }
 
         const productData = {
-            name,
-            description,
+            name: name,
+            description: description,
             price: price !== undefined ? parsePrice(price) : undefined,
             category_id: category_id ? parseInt(category_id) : undefined,
             images: JSON.stringify(images),
@@ -133,8 +134,13 @@ export async function updateProduct(req, res) {
         };
 
         const product = await Product.update(req.params.id, productData);
+        if (!product) {
+            return res.status(404).json({ error: "Produto não encontrado após atualização" });
+        }
+
         res.json(product);
     } catch (error) {
+        console.error("❌ Erro ao atualizar produto:", error);
         res.status(500).json({ error: error.message });
     }
 }
@@ -146,17 +152,8 @@ export async function deleteProduct(req, res) {
             return res.status(404).json({ error: "Produto não encontrado" });
         }
 
-        let images = [];
-        if (product.images) {
-            try {
-                images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
-            } catch (e) {
-                images = [];
-            }
-        }
-
-        if (Array.isArray(images)) {
-            images.forEach(function(imageUrl) {
+        if (product.images && Array.isArray(product.images)) {
+            product.images.forEach(function(imageUrl) {
                 const filePath = path.join(process.cwd(), imageUrl);
                 if (fs.existsSync(filePath)) {
                     fs.unlinkSync(filePath);
@@ -167,6 +164,7 @@ export async function deleteProduct(req, res) {
         await Product.delete(req.params.id);
         res.status(204).send();
     } catch (error) {
+        console.error("❌ Erro ao excluir produto:", error);
         res.status(500).json({ error: error.message });
     }
 }
