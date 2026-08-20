@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-console.log('📦 Conectando ao PostgreSQL...');
-
 const pool = new Pool({
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT) || 5432,
@@ -28,19 +26,6 @@ pool.on('error', (err) => {
 
 export async function getDatabase() {
     return pool;
-}
-
-export async function query(text, params) {
-    try {
-        const start = Date.now();
-        const res = await pool.query(text, params);
-        const duration = Date.now() - start;
-        console.log('📊 Query:', { text: text.substring(0, 100), duration, rows: res.rowCount });
-        return res;
-    } catch (error) {
-        console.error('❌ Erro na query:', error);
-        throw error;
-    }
 }
 
 export default pool;
