@@ -1,40 +1,28 @@
 {
-  "version": 2,
-  "builds": [
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
+    },
+    "backend": {
+      "root": "backend",
+      "entrypoint": "src/server.js"
+    }
+  },
+  "rewrites": [
     {
-      "src": "frontend/**/*",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/dist"
+      "source": "/api/(.*)?",
+      "destination": {
+        "type": "service",
+        "service": "backend"
       }
     },
     {
-      "src": "backend/src/server.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "includeFiles": [
-          "backend/src/**",
-          "backend/package.json"
-        ]
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "frontend"
       }
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/src/server.js"
-    },
-    {
-      "src": "/uploads/(.*)",
-      "dest": "backend/src/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/dist/index.html"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
