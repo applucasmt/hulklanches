@@ -1,4 +1,4 @@
-﻿import { getDatabase } from '../config/database.js';
+import { getDatabase } from '../config/database.js';
 import bcrypt from 'bcryptjs';
 
 export class User {
