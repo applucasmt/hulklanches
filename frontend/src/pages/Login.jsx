@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 
@@ -11,25 +11,15 @@ function Login({ onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('✅ BOTÃO CLICADO!');
-    console.log('📧 Email:', email);
-    console.log('🔑 Senha:', password);
-    
     setLoading(true);
     setError('');
 
     try {
       const response = await api.post('/auth/login', { email, password });
-      console.log('✅ Resposta recebida:', response.data);
-      
       if (onLogin) {
-        console.log('🔄 Chamando onLogin...');
         onLogin(response.data.token, response.data.user);
-      } else {
-        console.error('❌ onLogin não está definido!');
       }
     } catch (err) {
-      console.error('❌ Erro:', err);
       setError(err.response?.data?.error || 'Erro ao fazer login');
     } finally {
       setLoading(false);
@@ -56,11 +46,9 @@ function Login({ onLogin }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="admin@hulk.com"
               required
             />
           </div>
-
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2">Senha</label>
             <input
@@ -68,17 +56,14 @@ function Login({ onLogin }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="123456"
               required
             />
           </div>
-
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
               {error}
             </div>
           )}
-
           <button
             type="submit"
             disabled={loading}
@@ -88,24 +73,13 @@ function Login({ onLogin }) {
           </button>
         </form>
 
-        {/* Botão Área do Cliente */}
         <div className="mt-4">
           <button
             onClick={goToCliente}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2"
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2"
           >
             👀 Área do Cliente
           </button>
-          <p className="text-center text-xs text-gray-500 mt-2">
-            Acesse o cardápio digital sem fazer login
-          </p>
-        </div>
-
-        <div className="mt-6 text-center text-sm text-gray-600">
-          <p>Credenciais:</p>
-          <p className="font-mono text-xs">admin@hulk.com / 123456 (Admin)</p>
-          <p className="font-mono text-xs">funcionario@hulk.com / 123456 (Funcionário)</p>
-          <p className="font-mono text-xs">producao@hulk.com / 123456 (Produção)</p>
         </div>
       </div>
     </div>
