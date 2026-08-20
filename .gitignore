@@ -1,13 +1,38 @@
-﻿node_modules/
+# Dependências
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build
 dist/
 build/
 *.log
+
+# Environment
 .env
 .env.local
+.env.production
+.env.development
+
+# Banco de dados
 *.db
 *.sqlite
 data/
-.DS_Store
-Thumbs.db
+*.sqlite-journal
+
+# Uploads
+uploads/
+
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+.DS_Store
+
+# Sistema
+Thumbs.db
+desktop.ini
+
+# Vercel
+.vercel/
