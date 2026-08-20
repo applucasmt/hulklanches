@@ -1,4 +1,4 @@
-﻿import { getDatabase } from '../config/database.js';
+import { getDatabase } from '../config/database.js';
 
 export class Product {
     static async findAll() {
@@ -115,14 +115,5 @@ export class Product {
             [quantity, id]
         );
         return result.rows[0]?.stock || 0;
-    }
-
-    static async getLowStock(threshold = 5) {
-        const db = await getDatabase();
-        const result = await db.query(
-            'SELECT * FROM products WHERE stock < $1 AND is_visible = true ORDER BY stock ASC',
-            [threshold]
-        );
-        return result.rows;
     }
 }
